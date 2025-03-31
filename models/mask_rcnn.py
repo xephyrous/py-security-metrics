@@ -9,6 +9,16 @@ model = torchvision.models.detection.maskrcnn_resnet50_fpn(pretrained=True)
 model.eval()
 
 def analyze_frame(frame):
+    """
+    Analyzes a single video frame and detects persons using Mask R-CNN.
+
+    Args:
+        frame (numpy.ndarray): The input video frame in BGR format.
+
+    Returns:
+        dict: A dictionary of detected persons with bounding boxes, masks, and confidence scores.
+              Format: { "person_1": ([x1, y1, x2, y2], mask, confidence), ... }
+    """
     img = torch.tensor(frame).permute(2, 0, 1).float() / 255.0
     img = img.unsqueeze(0)
 
@@ -36,6 +46,16 @@ def analyze_frame(frame):
     return detections
 
 def resize_with_padding(image, target_size=(480, 480)):
+    """
+    Resizes an image and adds padding.
+
+    Args:
+        image (numpy.ndarray): The input image.
+        target_size (tuple, optional): The desired output size (width, height). Default is (480, 480).
+
+    Returns:
+        numpy.ndarray: The resized and padded image.
+    """
     h, w = image.shape[:2]
     scale = min(target_size[0] / w, target_size[1] / h)
     new_w, new_h = int(w * scale), int(h * scale)
@@ -53,6 +73,16 @@ def resize_with_padding(image, target_size=(480, 480)):
     return padded
 
 def draw_detections(frame, detections):
+    """
+    Draws bounding boxes and masks on the frame.
+
+    Args:
+        frame (numpy.ndarray): The input video frame.
+        detections (dict): A dictionary of detected persons with bounding boxes, masks, and confidence scores.
+
+    Returns:
+        numpy.ndarray: The frame with drawn bounding boxes and masks.
+    """
     for label, (box, mask, score) in detections.items():
         x1, y1, x2, y2 = map(int, box)
 
@@ -71,7 +101,16 @@ def draw_detections(frame, detections):
     return frame
 
 
-def process_video(video_in, output):
+def process_video(video_in, ):
+    """
+    Processes a video file, applies Mask R-CNN for person detection, and saves the output.
+
+    Args:
+        video_in (str): Path to the input video file.
+
+    Returns:
+        None
+    """
     video_name = os.path.splitext(os.path.basename(video_in))[0]
     output_folder = os.path.join("output", video_name)
     output_video_path = os.path.join(output_folder, f"{video_name}_processed.mp4")
