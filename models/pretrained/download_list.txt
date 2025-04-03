@@ -1,0 +1,10 @@
+https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt
+https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11s.pt
+https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11m.pt
+https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11l.pt
+https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11x.pt
+https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n-pose.pt
+https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11s-pose.pt
+https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11m-pose.pt
+https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11l-pose.pt
+https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11x-pose.pt

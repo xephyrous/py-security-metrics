@@ -3,8 +3,7 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 
-# Load YOLO 11 Pose model
-model = YOLO("yolo11n-pose.pt")
+model = None
 
 # Define keypoint connections for the skeleton
 LIMB_CONNECTIONS = [
@@ -33,12 +32,13 @@ def analyze_frame(frame):
     """
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
     results = model(frame_rgb)  # Run inference on the frame
-
     keypoints_data = []
 
     for result in results:
-        if not hasattr(result, "keypoints") or result.keypoints is None:
-            continue  # Skip if no keypoints detected
+        # No poses detected
+        if result.keypoints.xy.numel() == 0:
+            print("No keypoints found in the frame")
+            continue
 
         keypoints = result.keypoints.xy[0].cpu().numpy()  # Extract keypoints
         confidence = result.keypoints.conf[0].cpu().numpy()  # Extract confidence scores
@@ -58,12 +58,17 @@ def draw_poses(frame, keypoints_data):
     Returns:
         numpy.ndarray: The frame with drawn keypoints and skeletons.
     """
+    if not keypoints_data:
+        return frame
+
     for keypoints, confidence in keypoints_data:
         for i, (x, y) in enumerate(keypoints):
+            # Ignore low confidence keypoints
             if confidence[i] < 0.3 or (x == 0 and y == 0):
-                continue  # Ignore low confidence keypoints
+                continue
 
-            cv2.circle(frame, (int(x), int(y)), 5, (0, 0, 255), -1)  # Draw keypoints
+            # Draw keypoints
+            cv2.circle(frame, (int(x), int(y)), 5, (0, 0, 255), -1)
 
         # Draw limbs
         for (p1, p2) in LIMB_CONNECTIONS:

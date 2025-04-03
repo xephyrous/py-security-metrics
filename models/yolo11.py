@@ -2,8 +2,7 @@ import os
 import cv2
 from ultralytics import YOLO
 
-# Load YOLO 11 OBB model
-model = YOLO("yolo11n.pt")
+model = None
 
 def analyze_frame(frame):
     """
@@ -28,7 +27,7 @@ def analyze_frame(frame):
         for box, conf, cls in zip(result.boxes.xyxy, result.boxes.conf, result.boxes.cls):
             label = model.names[int(cls)]  # Get class name
 
-            if label != "person" or conf < 0.7:
+            if label != "person":
                 continue
 
             person_count += 1
