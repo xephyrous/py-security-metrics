@@ -43,6 +43,13 @@ def analyze_tile(tile, offset_x, offset_y, debug_window = False):
         dict: A dictionary of detected persons with bounding boxes and confidence scores.
               Format: [ { "person_1": ([x1, y1, x2, y2], confidence), ... } ]
     """
+<<<<<<< Updated upstream
+=======
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
+    results = model(frame_rgb, verbose=False)  # Run inference on the frame
+    detections = {}
+    person_count = 0
+>>>>>>> Stashed changes
 
     global running_speed
     global tile_total

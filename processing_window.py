@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QWidget
 from models.yolo11 import analyze_frame, draw_detections
 
 
-class Window(QMainWindow):
+class ProcessingWindow(QMainWindow):
     def __init__(self, args):
         super().__init__()
 

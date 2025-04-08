@@ -1,30 +1,37 @@
+import argparse
 import os.path
+import sys
 
 from PyQt5.QtWidgets import QApplication
+from platformdirs import user_data_dir, user_config_dir, user_cache_dir
 from ultralytics import YOLO
 
 import models.yolo11
 import models.yolo11pose
+from processing_window import ProcessingWindow
 from utils import download_file, get_path_filename, check_files_exist
-from window import Window
-import sys, argparse
+
+data_dir = user_data_dir('py-security-metrics', 'xephyrous')
+config_dir = user_config_dir('py-security-metrics', 'xephyrous')
+cache_dir = user_cache_dir('py-security-metrics', 'xephyrous')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        prog='Py Security Metrics v0.2.a',
-        description=''
+        prog='csm',
+        description='Video security analysis and statistics'
     )
 
-    parser.add_argument('--input', '-i', action='store', dest='input', help='The path of the video to process')
-    parser.add_argument('--output', '-o', action='store', dest='output', default='processed.mp4', help='The path to save the processed video')
-    parser.add_argument('--stats', '-st', action='store_true', dest='stats', help='Outputs the stats of model processing')
+    parser.add_argument('--input', '-i', action='store', dest='input', help='the path of the video to process')
+    parser.add_argument('--output', '-o', action='store', dest='output', default='processed.mp4', help='the path to save the processed video')
+    parser.add_argument('--stats', '-st', action='store_true', dest='stats', help='outputs the stats of model processing')
+    parser.add_argument('--zones', '-z', action='store', dest='zones', help='the zones definition file to use during processing')
 
     model_sizes = parser.add_mutually_exclusive_group()
-    model_sizes.add_argument('--nano', '-n', action='store_true', dest='nano', help='')
-    model_sizes.add_argument('--small', '-s', action='store_true', dest='small')
-    model_sizes.add_argument('--medium', '-m', action='store_true', dest='medium')
-    model_sizes.add_argument('--large', '-l', action='store_true', dest='large')
-    model_sizes.add_argument('--xlarge', '-xl', action='store_true', dest='extra_large')
+    model_sizes.add_argument('--nano', '-n', action='store_true', dest='nano', help='specifies the nano model for processing (default)')
+    model_sizes.add_argument('--small', '-s', action='store_true', dest='small', help='specifies the small model for processing')
+    model_sizes.add_argument('--medium', '-m', action='store_true', dest='medium', help='specifies the medium model for processing')
+    model_sizes.add_argument('--large', '-l', action='store_true', dest='large', help='specifies the large model for processing')
+    model_sizes.add_argument('--xlarge', '-xl', action='store_true', dest='extra_large', help='specifies the extra large model for processing')
 
     args = parser.parse_args()
     app = QApplication(sys.argv)
@@ -43,27 +50,22 @@ if __name__ == '__main__':
         if args.nano:
             check_files_exist('models/pretrained/yolo11n.pt', 'models/pretrained/yolo11n-pose.pt')
             models.yolo11.model = YOLO('models/pretrained/yolo11n.pt')
-            models.yolo11pose.model = YOLO('models/pretrained/yolo11n-pose.pt')
             print('Using pretrained-nano model')
         elif args.small:
             check_files_exist('models/pretrained/yolo11s.pt', 'models/pretrained/yolo11s-pose.pt')
             models.yolo11.model = YOLO('models/pretrained/yolo11s.pt')
-            models.yolo11pose.model = YOLO('models/pretrained/yolo11s-pose.pt')
             print('Using pretrained-small model')
         elif args.medium:
             check_files_exist('models/pretrained/yolo11m.pt', 'models/pretrained/yolo11m-pose.pt')
             models.yolo11.model = YOLO('models/pretrained/yolo11m.pt')
-            models.yolo11pose.model = YOLO('models/pretrained/yolo11m-pose.pt')
             print('Using pretrained-medium model')
         elif args.large:
             check_files_exist('models/pretrained/yolo11l.pt', 'models/pretrained/yolo11l-pose.pt')
             models.yolo11.model = YOLO('models/pretrained/yolo11l.pt')
-            models.yolo11pose.model = YOLO('models/pretrained/yolo11l-pose.pt')
             print('Using pretrained-large model')
         elif args.extra_large:
             check_files_exist('models/pretrained/yolo11x.pt', 'models/pretrained/yolo11x-pose.pt')
             models.yolo11.model = YOLO('models/pretrained/yolo11x.pt')
-            models.yolo11pose.model = YOLO('models/pretrained/yolo11x-pose.pt')
             print('Using pretrained-extra-large model')
         else:
             print('No model type specified!')
@@ -73,14 +75,15 @@ if __name__ == '__main__':
         try:
             check_files_exist('models/pretrained/yolo11n.pt', 'models/pretrained/yolo11n-pose.pt')
             models.yolo11.model = YOLO('models/pretrained/yolo11n.pt')
-            models.yolo11pose.model = YOLO('models/pretrained/yolo11n-pose.pt')
             print('Using fallback pretrained-nano model')
         except FileNotFoundError as e:
             print(f"Error loading fallback model: {e}")
             exit(-1)
 
-    # Application entrypoint
-    window = Window(args)
+    # Zone creation : TODO
+
+    # Video processing
+    window = ProcessingWindow(args)
     window.setWindowTitle('Py Security Metrics v0.1.a')
     window.setFixedSize(960, 540)
     window.show()

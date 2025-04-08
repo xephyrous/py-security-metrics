@@ -1,0 +1,20 @@
+{
+  "name": "Developer Zones",
+  "description": "A set of testing zones used with the development aerial videos.",
+  "zones": [
+    {
+      "name": "Zone A",
+      "uuid": "18ea4d761a402cedfaf8a0458c1880ea3f2b34088a60a9b2afb519e7615d64b7",
+      "boxes": [
+        [[0, 0], [50, 50]]
+      ]
+    },
+    {
+      "name": "Zone B",
+      "uuid": "f0ea9ddbe3bbe32dfea171672cb84cf0a8e585763db7a2ab5c85f8635ed7ef0b",
+      "boxes": [
+        [[65, 75], [100, 100]]
+      ]
+    }
+  ]
+}

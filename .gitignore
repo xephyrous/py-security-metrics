@@ -1,4 +1,5 @@
 *.pt
+*.mp4
 output
 .idea
 __pycache__
