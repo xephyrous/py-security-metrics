@@ -39,7 +39,7 @@ class ProcessingWindow(QMainWindow):
             sys.exit()
 
         # Application UI layout
-        self.label = Label(self)
+        self.label = QLabel(self)
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.label)
