@@ -97,7 +97,7 @@ class ProcessingWindow(QMainWindow):
                     scaled_zx2 = int(zx2 * scale_x)
                     scaled_zy2 = int(zy2 * scale_y)
 
-                    for label, (box, score) in keypoints_data.items():
+                    for label, (box, score, feet) in keypoints_data.items():
                         x1, y1, x2, y2 = map(int, box)
 
                         if not (x2 < scaled_zx1 or x1 > scaled_zx2 or y2 < scaled_zy1 or y1 > scaled_zy2):
@@ -105,11 +105,13 @@ class ProcessingWindow(QMainWindow):
                             detection_collisions.append(label)
 
             # Draw detections
-            for label, (box, score) in keypoints_data.items():
+            for label, (box, score, feet) in keypoints_data.items():
                 color = (0, 255, 0) if label not in detection_collisions else (0, 0, 255)
                 x1, y1, x2, y2 = map(int, box)
+                xr1, yr1, xr2, yr2 = map(int, feet)
 
                 cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+                cv2.rectangle(frame, (xr1, yr1), (xr2, yr2), color, 2)
                 cv2.putText(frame, f"{label} ({score:.2f})", (x1, y1 - 10),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 

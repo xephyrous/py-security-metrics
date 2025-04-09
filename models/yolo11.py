@@ -173,7 +173,17 @@ def analyze_frame(frame, tile_size=640, overlap=0, iou_thresh=0.5, debug_window=
     final_detections = {}
     for i, idx in enumerate(keep_indices):
         label = f"person_{i+1}"
-        final_detections[label] = (boxes[idx].tolist(), scores[idx].item())
+
+        box = boxes[idx].tolist()
+
+        width = box[2] - box[0]
+
+        box[0] += width/4
+        box[2] -= width/4
+
+        box[1] = box[3] - ((box[3] - box[1]) / 5)
+
+        final_detections[label] = (boxes[idx].tolist(), scores[idx].item(), box)
 
     return final_detections
 
@@ -188,9 +198,11 @@ def draw_detections(frame, detections):
     Returns:
         numpy.ndarray: The frame with drawn bounding boxes and labels.
     """
-    for label, (box, score) in detections.items():
+    for label, (box, score, feet) in detections.items():
         x1, y1, x2, y2 = map(int, box)
+        xr1, yr1, xr2, yr2 = map(int, feet)
         cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        cv2.rectangle(frame, (xr1, yr1), (xr2, yr2), (255, 255, 0), 2)
         cv2.putText(frame, f"{label} ({score:.2f})", (x1, y1 - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
     return frame
