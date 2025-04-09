@@ -25,6 +25,7 @@ if __name__ == '__main__':
     parser.add_argument('--output', '-o', action='store', dest='output', default='processed.mp4', help='the path to save the processed video')
     parser.add_argument('--stats', '-st', action='store_true', dest='stats', help='outputs the stats of model processing')
     parser.add_argument('--zones', '-z', action='store', dest='zones', help='the zones definition file to use during processing')
+    parser.add_argument('--proc-wind', '-pw', action='store_true', dest='proc_wind', help='displays the tile processing debug window during processing')
 
     model_sizes = parser.add_mutually_exclusive_group()
     model_sizes.add_argument('--nano', '-n', action='store_true', dest='nano', help='specifies the nano model for processing (default)')
