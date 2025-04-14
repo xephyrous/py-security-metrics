@@ -6,6 +6,12 @@ from ultralytics import YOLO
 
 model = None
 
+# if torch.cuda.is_available():
+#     model.to('cuda')
+#     print("On cuda")
+# else:
+#     print("On cpu.")
+
 running_speed = 0
 frame_speed = 0
 frame_total = 0
