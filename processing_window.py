@@ -10,7 +10,7 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QWidget, QMenu, QMenuBar, QSizePolicy
 
-from models.yolo11 import analyze_frame, draw_detections
+from models.yolo11 import analyze_frame
 from ui.smart_label import SmartLabel
 
 

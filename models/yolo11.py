@@ -71,7 +71,7 @@ def analyze_tile(tile, offset_x, offset_y, debug_window = False):
         )
         cv2.putText(
             labeled_tile,
-            f"Average Tile Computation Time: {'N/A' if frame_total == 0 else round(frame_speed/frame_total, 2)}ms",
+            f"Average Frame Computation Time: {'N/A' if frame_total == 0 else round(frame_speed/frame_total, 2)}ms",
             (10, 95),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.6, (0, 255, 0), 2
@@ -97,7 +97,7 @@ def analyze_tile(tile, offset_x, offset_y, debug_window = False):
         for box, conf, cls in zip(result.boxes.xyxy, result.boxes.conf, result.boxes.cls):
             label = model.names[int(cls)]  # Get class name
 
-            if label != "person":
+            if label != "person" or conf < 0.3:
                 continue
 
             person_count += 1
@@ -187,67 +187,3 @@ def analyze_frame(frame, tile_size=640, overlap=0, iou_thresh=0.5, debug_window=
 
     return final_detections
 
-def draw_detections(frame, detections):
-    """
-    Draws bounding boxes and labels on the frame.
-
-    Args:
-        frame (numpy.ndarray): The input video frame.
-        detections (dict): A dictionary of detected objects with bounding boxes and confidence scores.
-
-    Returns:
-        numpy.ndarray: The frame with drawn bounding boxes and labels.
-    """
-    for label, (box, score, feet) in detections.items():
-        x1, y1, x2, y2 = map(int, box)
-        xr1, yr1, xr2, yr2 = map(int, feet)
-        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.rectangle(frame, (xr1, yr1), (xr2, yr2), (255, 255, 0), 2)
-        cv2.putText(frame, f"{label} ({score:.2f})", (x1, y1 - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-    return frame
-
-def process_video(video_in, tile_size=640, overlap=0, debug_window = False):
-    """
-    Processes a video file, applies object detection, and saves the output.
-
-    Args:
-        video_in (str): Path to the input video file.
-        tile_size: tile size to use.
-        overlap: overlap of tile, defaults to 0.
-        debug_window: whether to display debug window.
-
-    Returns:
-        None
-    """
-    video_name = os.path.splitext(os.path.basename(video_in))[0]
-    output_folder = os.path.join("output", video_name)
-    output_video_path = os.path.join(output_folder, f"{video_name}_processed.mp4")
-    os.makedirs(output_folder, exist_ok=True)
-
-    cap = cv2.VideoCapture(video_in)
-    if not cap.isOpened():
-        print(f"Error: Couldn't open video file '{video_in}'.")
-        return
-
-    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
-
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    out = cv2.VideoWriter(output_video_path, fourcc, fps, (frame_width, frame_height))
-
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
-
-        detections = analyze_frame(frame, tile_size=tile_size, overlap=overlap, debug_window=debug_window)
-        output_frame = draw_detections(frame, detections)
-
-        cv2.imshow(video_name, output_frame)
-        out.write(output_frame)
-
-    cap.release()
-    out.release()
-    cv2.destroyAllWindows()
